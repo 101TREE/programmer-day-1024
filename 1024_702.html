@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🎉 1024 程序员节快乐！</title>
+<style>
+html,body{margin:0;padding:0;overflow:hidden;background:radial-gradient(circle at center,#0a0f2c 0%,#050710 100%);height:100%;color:white;font-family:"Segoe UI",sans-serif;}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;}
+#textBox{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;}
+h1{font-size:3em;margin:0;background:linear-gradient(90deg,#00c6ff,#0072ff);-webkit-background-clip:text;color:transparent;animation:glow 3s ease-in-out infinite alternate;}
+@keyframes glow{from{text-shadow:0 0 10px #00c6ff,0 0 20px #0072ff;}to{text-shadow:0 0 30px #00e0ff,0 0 60px #00aaff;}}
+p{margin-top:12px;color:#a8b3d1;font-size:1.2em;}
+button{margin-top:24px;background:linear-gradient(90deg,#00e0ff,#00aaff);border:none;padding:10px 20px;border-radius:8px;color:#021;font-size:1em;font-weight:600;cursor:pointer;}
+button:hover{background:linear-gradient(90deg,#00aaff,#00e0ff);}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div id="textBox">
+  <h1>Happy Programmer’s Day 1024 🎉</h1>
+  <p>摸鱼群的牛马么，1024快乐。</p>
+  <button id="celebrateBtn">再来一波！</button>
+</div>
+<script>
+// ---- Canvas Confetti ----
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+let W = canvas.width = innerWidth;
+let H = canvas.height = innerHeight;
+window.addEventListener('resize',()=>{W=canvas.width=innerWidth;H=canvas.height=innerHeight});
+let pieces=[];
+function spawn(n){
+  for(let i=0;i<n;i++){
+    pieces.push({
+      x:Math.random()*W,
+      y:Math.random()*H - H,
+      r:Math.random()*6+4,
+      c:`hsl(${Math.random()*360},80%,60%)`,
+      vy:Math.random()*4+2,
+      vx:(Math.random()-0.5)*2,
+      rot:Math.random()*360,
+      vr:(Math.random()-0.5)*10
+    });
+  }
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  for(let i=pieces.length-1;i>=0;i--){
+    let p=pieces[i];
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.rot+=p.vr;
+    if(p.y>H+50){pieces.splice(i,1);continue;}
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle=p.c;
+    ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.6);
+    ctx.restore();
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+function celebrate(){
+  spawn(200);
+  const msg = document.createElement("div");
+  msg.textContent = "🎉 程序员节快乐！";
+  msg.style.position="fixed";
+  msg.style.left="50%";
+  msg.style.top="60%";
+  msg.style.transform="translate(-50%,-50%)";
+  msg.style.color="#fff";
+  msg.style.fontSize="2em";
+  msg.style.fontWeight="700";
+  msg.style.textShadow="0 0 20px #00e0ff";
+  msg.style.opacity="1";
+  msg.style.transition="opacity 2.5s ease-out";
+  document.body.appendChild(msg);
+  setTimeout(()=>msg.style.opacity="0",1000);
+  setTimeout(()=>msg.remove(),2500);
+}
+document.getElementById("celebrateBtn").addEventListener("click",()=>celebrate());
+// ---- Auto trigger on 10/24 ----
+const now = new Date();
+if(now.getMonth()===9 && now.getDate()===24){
+  celebrate();
+} else {
+  // 小提示
+  const tip=document.createElement("div");
+  tip.textContent=`今天是 ${now.getMonth()+1}/${now.getDate()}，但无论何时，编码精神永存 👨‍💻`;
+  tip.style.position='fixed';
+  tip.style.bottom='20px';
+  tip.style.right='20px';
+  tip.style.color='#aaa';
+  tip.style.fontSize='0.9em';
+  document.body.appendChild(tip);
+}
+</script>
+</body>
+</html>
